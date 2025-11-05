@@ -1,45 +1,60 @@
-# HS Mainz pagedjs workshop
+# KD Lab pagedjs workshop
 
-## Was ist pagedjs
+## What is pagedjs / Was ist pagedjs
 
-### CSS Erweiterung
+### CSS Extension / CSS Erweiterung
 
-Pagedjs setzt unter anderem den [CSS Generated Content for Paged Media Module Draft](https://www.w3.org/TR/css-gcpm-3/) um, der bisher noch von keinem Browser unterstützt wird.
+Pagedjs is facilitation the [CSS Generated Content for Paged Media Module Draft](https://www.w3.org/TR/css-gcpm-3/), which hasn't been fully implemented by any browser to date.
+This allows us to use CSS rules for printed media, which the browser would otherwise ignore. Without these designing print documents is quite constrained.
+
+Pagedjs setzt unter anderem den [CSS Generated Content for Paged Media Module Draft](https://www.w3.org/TR/css-gcpm-3/) um, der bisher noch von keinem Browser (komplett) unterstützt wird.
 Dadurch können wir hilfreiche CSS Regeln benutzen, die der Browser normalerweise ignorieren würde. Ohne diese Regeln ist die Gestaltung von Print Dokumenten noch sehr begrenzt.
 
-### Druckvorschau
+### Print Preview / Druckvorschau
+
+To implement those print css rules pagedjs is simulating a print preview, which chunks our website into multiple pages and applies our custom styles.
+This also allows us to use the inspect dev tools, to debug our code and try out code directly in the browser.  
 
 Um diese und weitere Regeln umzusetzen simuliert pagedjs eine Druckvorschau, bei der unsere Webseite
-gechunkt wird und in Doppelseiten ausgeworfen wird. Das hilft uns dabei effizienter zu arbeiten, da
-die native Druckvorschau der Browser meistens sehr simpel ist. Dazu können wir auch DevTools benutzen
+gechunkt wird und in Doppelseiten ausgeworfen wird. Dazu können wir auch DevTools benutzen
 um direkt im Browser Änderungen durchzuführen.
 
 ## setup
 
-Wir benutzen heute den vorkonfigurierten pagedjs polyfill. Du kannst pagedjs aber auch selber konfigurieren wenn du die paged.js Datei runterlädst oder das npm-Paket benutzt.
+We will use the pagedjs polyfill. You can either download the script locally or use a cdn link. In these folders we use it locally.
+
+Wir benutzen heute den vorkonfigurierten pagedjs polyfill. Wir können pagedjs entweder lokal oder über einen cdn link. Hier benutzen wir pagedjs in einer lokalen Datei.
 [paged documentation](https://pagedjs.org/documentation/2-getting-started-with-paged.js/#using-paged.js-as-a-polyfill-in-web-browsers)
 
 ```HTML
 <script src="./paged.polyfill.js" defer></script>
 ```
 
-Der polyfill schießt das HTML automatisch, nachdem er geladen wurde, aus. Dies kann verhindert werden wenn wir `PagedConfig` mit `{ auto: false }` zum [global window object](https://developer.mozilla.org/en-US/docs/Glossary/Global_object) hinzufügen.
+The polyfill automatically renders the HTML into a print preview. This can be stopped by adding `PagedConfig` as object with `{ auto: false }` to the [global window object](https://developer.mozilla.org/en-US/docs/Glossary/Global_object).
+
+Der polyfill zeigt das HTML automatisch, nachdem er geladen wurde, in der Druckvorschau. Dies kann verhindert werden wenn wir `PagedConfig` mit `{ auto: false }` zum [global window object](https://developer.mozilla.org/en-US/docs/Glossary/Global_object) hinzufügen.
 
 ```HTML
 <script> window.PagedConfig = { auto: false };</script>
 ```
 
-Um das HTML auszuschießen fügen wir ein Button zu unserem HTML hinzu:
+To render the HTML in a print preview we can add a button:
+
+Um das HTML als Printvorschau zu rendern fügen wir ein Button zu unserem HTML hinzu:
 
 ```HTML
 <button onclick="window.PagedPolyfill.preview()" class="no-print"> preview</button>
 ```
+
+For the preview to function correctly, we need to add the `interface.css` from the [official gitlab](https://gitlab.coko.foundation/pagedjs/interface-polyfill).
 
 Wir brauchen auch die `interface.css` vom [offiziellen gitlab](https://gitlab.coko.foundation/pagedjs/interface-polyfill) um die Druckbögen korrekt zu sehen
 
 ```HTML
 <link rel="stylesheet" href="./interface.css" />
 ```
+
+Now the HTML should look like this.
 
 Jetzt müsste dein HTML etwa so aussehen.
 
@@ -59,26 +74,31 @@ Jetzt müsste dein HTML etwa so aussehen.
 </html>
 ```
 
-Nun können wir loslegen.
-
 ## @page rules
 
+@page css queries can be used to configure our document. Similarly to document options and master pages in InDesign.
+
 Mit dem @page-CCS-Query können wir unser Dokument grundlegend einstellen. Diese funktioniert in etwa
-wie Masterseiten in InDesign.
+wie die Dokumenteinstellungen und Masterseiten in InDesign.
 
 ### size
 
+The size rule defines the format of our document. We can either use DIN formats or use custom sizes in mm for example.
+_The size rule can only be defined once in an @page query!_
+
 In der size-Regel wird das Papierformat festgelegt. Dabei können wir gängige Formate oder mm Angaben nutzen.
-_Die size rule kann nur einmal im @page query festgelegt werden._
+_Die size rule kann nur einmal im @page query festgelegt werden!_
 
 ```CSS
 @page {
     size: 420mm 210mm;
-    size: A4 landscape; /*landscape falls wir nicht portrait wollen*/
+    size: A4 landscape; /*landscape if we don't want the default portrait mode -- landscape falls wir nicht portrait wollen*/
 }
 ```
 
 ### margin
+
+The margin rule is used to define the margins of the page in the document. These margins can later be filled with [generated content](https://pagedjs.org/documentation/7-generated-content-in-margin-boxes/) via pagedjs.
 
 Mit margin geben wir unseren Satzspiegel an. Die margins werden von Pagedjs später in unterschiedliche Elemente aufgeteilt, die mit [Inhalt gefüllt werden können.](https://pagedjs.org/documentation/7-generated-content-in-margin-boxes/)
 
@@ -102,33 +122,42 @@ Mit margin geben wir unseren Satzspiegel an. Die margins werden von Pagedjs spä
 
 ### bleed
 
+Bleed can also be defined with the bleed attribute.
+
 Bleed bezeichnet den Anschnitt. Dort benutzen wir in den meisten Fällen 3mm
 
 ```CSS
 @page{
-bleed: 3mm;
+  bleed: 3mm;
 }
 ```
 
-## Spezifische Seiten ansprechen
+## Named Pages / Spezifische Seiten ansprechen
 
-Um Seiten spezifisch zu gestalten gibt es zwei verschiedene Arten diese Anzusprechen. Einmal generell
-mit den Page Selektoren und einmal mit benannten Seiten.
+To style specific pages we can use pseudo selectors or named pages.
+
+_Here we can use all @page rules except for size and bleed. These have to be defined in the general @page query!_
+
+Um Seiten spezifisch zu gestalten können wir entweder Pseudoselektoren oder benannten Seiten benutzen.
 
 _Hier können alle @page regeln verwendet werden, außer size und bleed. Diese können nur einmal im
 generellen @page query festgelegt werden!_
 
-### page Selektoren
+### Page Pseudo Selectors / Page Pseudo Selektoren
 
-Um spezifische Seiten zu stylen gibt es folgende CSS page Selektoren
+There exist the following pseudo selectors:
 
-- `:first` (für die erste Seite)
-- `:blank` (für alle Seiten ohne Inhalt)
-- `:right` (alle ungeraden Seiten; alle rechten Seiten)
-- `:left` (alle geraden Seiten; alle linken Seiten)
+Um spezifische Seiten zu stylen gibt es folgende CSS page Selektoren:
+
+- `:first` (for the first page / für die erste Seite)
+- `:blank` (all pages without content / für alle Seiten ohne Inhalt)
+- `:right` (all odd or right pages / alle ungeraden Seiten; alle rechten Seiten)
+- `:left` (all even or left pages / alle geraden Seiten; alle linken Seiten)
 
 [Dokumentation](https://pagedjs.org/documentation/5-web-design-for-print/#%40page-rule)
 [Cheat Sheet](https://pagedjs.org/documentation/cheatsheet/)
+
+This is how we use them:
 
 Diese werden folgendermaßen eingesetzt:
 
@@ -147,10 +176,24 @@ Diese werden folgendermaßen eingesetzt:
 }
 ```
 
+This allows us for example to define a different page layout for left and right pages, to have a constant inner and outer margin.
+
 So können wir zum Beispiel den Satz spiegel für links und rechts seperat einstellen, damit der Abstand
 zum Bund und zur Außenkante rechts und links gleich ist.
 
+```CSS
+@page:left {
+  margin: 5mm 10mm 5mm 5mm;
+}
+
+@page:right {
+  margin: 5mm 5mm 5mm 10mm;
+}
+```
+
 ### named pages
+
+Named pages allow us to e.g. style different chapters specifically. For this we define a name in the container/wrapper of the chapter:
 
 Mit named pages können wir z.B. verschiedene Kapitel in unserem Dokument anders stylen. Dafür geben
 wir im Container/Wrapper des Kapitels an, wie diese heißen soll:
@@ -160,6 +203,7 @@ div.chapter-introduction {
     page: Introduction;
 }
 ```
+Every page which contains our container/wrapper can be styled now:
 
 Jede Seite auf der unser Container/Wrapper enthalten ist, kann nun seperat gestyled werden:
 
@@ -169,7 +213,9 @@ Jede Seite auf der unser Container/Wrapper enthalten ist, kann nun seperat gesty
 }
 ```
 
-Auch hier können wir mit den page Selektoren arbeiten:
+Of course we can also use the pseudo selectors in combination:
+
+Auch hier können wir mit den page Pseudo Selektoren arbeiten:
 
 ```CSS
 @page Introduction:first {
