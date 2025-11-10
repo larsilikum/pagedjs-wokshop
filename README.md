@@ -602,41 +602,21 @@ Für Elemente die vom Text umfloßen werden sollen gibt es die CSS Eigenschaft `
 
 Pagedjs also provides these variables for calculation (values are only examples and come from the @page rule)
 
-```CSS
-/* Page size */
-  --pagedjs-pagebox-width: 148mm;
-  --pagedjs-pagebox-height: 210mm;
-/* Page size with bleed */
-  --pagedjs-width: calc( 148mm + 3mm + 3mm );
-  --pagedjs-height: calc( 210mm + 3mm + 3mm );
-/* Margins */
-  --pagedjs-margin-top: 31.5mm;
-  --pagedjs-margin-right: 22mm;
-  --pagedjs-margin-left: 9mm;
-  --pagedjs-margin-bottom: 7mm;
-/* Bleed */
-  --pagedjs-bleed-top: 3mm;
-  --pagedjs-bleed-right: 3mm;
-  --pagedjs-bleed-bottom: 3mm;
-  --pagedjs-bleed-left: 3mm;
-```
-
-
 Pagedjs stellt zur Berechnung auch diese Variablen zur Verfügung (Werte sind nur Beispiel und kommen aus der @page regel)
 
 ```CSS
-/* Seitengröße */
+/* Page size / Seitengröße */
   --pagedjs-pagebox-width: 148mm;
   --pagedjs-pagebox-height: 210mm;
-/* Seitengröße mit Anschnitt */
+/* Page size with bleed / Seitengröße mit Anschnitt */
   --pagedjs-width: calc( 148mm + 3mm + 3mm );
   --pagedjs-height: calc( 210mm + 3mm + 3mm );
-/* Ränder */
+/* Margins / Ränder */
   --pagedjs-margin-top: 31.5mm;
   --pagedjs-margin-right: 22mm;
   --pagedjs-margin-left: 9mm;
   --pagedjs-margin-bottom: 7mm;
-/* Anschnitt */
+/* Bleed / Anschnitt */
   --pagedjs-bleed-top: 3mm;
   --pagedjs-bleed-right: 3mm;
   --pagedjs-bleed-bottom: 3mm;
