@@ -76,31 +76,31 @@ Jetzt müsste dein HTML etwa so aussehen.
 
 ## @page rules
 
-@page css queries can be used to configure our document. Similarly to document options and master pages in InDesign.
+@page css selector can be used to configure our document. Similarly to document options and master pages in InDesign.
 
-Mit dem @page-CCS-Query können wir unser Dokument grundlegend einstellen. Diese funktioniert in etwa
+Mit dem @page-CCS-Selektor können wir unser Dokument grundlegend einstellen. Diese funktioniert in etwa
 wie die Dokumenteinstellungen und Masterseiten in InDesign.
 
 ### size
 
-The size rule defines the format of our document. We can either use DIN formats or use custom sizes in mm for example.
-_The size rule can only be defined once in an @page query!_
+The size rule defines the format of our document. We can either use DIN formats or use custom sizes in mm for example. For print there exists mm and pt as unit in CSS.
+_The size rule can only be defined once in an @page selector!_
 
-In der size-Regel wird das Papierformat festgelegt. Dabei können wir gängige Formate oder mm Angaben nutzen.
-_Die size rule kann nur einmal im @page query festgelegt werden!_
+In der size-Regel wird das Papierformat festgelegt. Dabei können wir gängige Formate oder mm Angaben nutzen. Für Print können wir im CSS mm und pt als Einheiten benutzen.
+_Die size rule kann nur einmal im @page selektor festgelegt werden!_
 
 ```CSS
 @page {
-    size: 420mm 210mm;
+    size: 200mm 200mm;
     size: A4 landscape; /*landscape if we don't want the default portrait mode -- landscape falls wir nicht portrait wollen*/
 }
 ```
 
 ### margin
 
-The margin rule is used to define the margins of the page in the document. These margins can later be filled with [generated content](https://pagedjs.org/documentation/7-generated-content-in-margin-boxes/) via pagedjs.
+The margin rule is used to define the margins of the page in the document. These margins can later be filled with [generated content](https://pagedjs.org/en/documentation/7-generated-content-in-margin-boxes/) via pagedjs.
 
-Mit margin geben wir unseren Satzspiegel an. Die margins werden von Pagedjs später in unterschiedliche Elemente aufgeteilt, die mit [Inhalt gefüllt werden können.](https://pagedjs.org/documentation/7-generated-content-in-margin-boxes/)
+Mit margin geben wir unseren Satzspiegel an. Die margins werden von Pagedjs später in unterschiedliche Elemente aufgeteilt, die mit [Inhalt gefüllt werden können.](https://pagedjs.org/en/documentation/7-generated-content-in-margin-boxes/)
 
 ```CSS
 @page {
@@ -220,6 +220,9 @@ Auch hier können wir mit den page Pseudo Selektoren arbeiten:
 ```CSS
 @page Introduction:first {
     margin: 0;
+    @bottom-left {
+        content: "Introduction";
+    }
 }
 ```
 
@@ -505,6 +508,28 @@ Wir wollen zum Beispiel immer den ersten Titel auf der Seite benutzen:
     }
 }
 ```
+
+### running elements
+
+Another quite interesting option is to use running elements to place in our margin boxes. We give the element a `position: running(variableName);` property and pagedjs removes this element from the pageflow and places it where we define `content: element(variableName);`
+
+Eine andere interessante option sind running elements die wir in unsere Marginalränder einbetten können. Dafür benutzen wir die property `position: running(variableName);` die pagedjs dazu auffordert das Element aus dem pageflow zu nehmen und dort einzusetzen wo definiert `content: element(variableName);` ist.
+
+example / Beispiel
+```CSS
+img.running-element {
+    position: running(cornerSymbol);
+}
+
+@page {
+    /* ... */
+    @top-left-corner {
+        content: element(cornerSymbol);
+        /* ... */
+    }
+}
+```
+
 There are several other options here, and the [pagedjs documentation] (https://pagedjs.org/documentation/7-generated-content-in-margin-boxes/) can also help.
 
 Hier gibt es noch einige andere Möglichkeiten, da hilft auch die [pagedjs Doku.](https://pagedjs.org/documentation/7-generated-content-in-margin-boxes/)
