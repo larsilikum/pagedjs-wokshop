@@ -226,7 +226,7 @@ Auch hier können wir mit den page Pseudo Selektoren arbeiten:
 }
 ```
 
-## desinging for print / Für print gestalten
+## designing for print / Für print gestalten
 
 ### @media print
 
